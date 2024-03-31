@@ -1,16 +1,11 @@
-import subprocess
+$nome_servico = "Spooler"
 
-nome_servico = "Spooler"
+$status_servico = Get-Service -Name $nome_servico | Select-Object -ExpandProperty Status
 
-comando_ps_status = f"Get-Service '{nome_servico}' | Select-Object -ExpandProperty Status"
-
-status_servico = subprocess.run(["powershell", "-Command", comando_ps_status], capture_output=True, text=True).stdout.strip()
-
-if status_servico != "Running":
-    comando_ps_start = f"Start-Service '{nome_servico}'"
-    
-    subprocess.run(["powershell", "-Command", comando_ps_start])
-    
-    print("O serviço foi iniciado com sucesso.")
-else:
-    print("O serviço já está em execução.")
+if ($status_servico -ne "Running") {
+    # Iniciar o serviço se não estiver em execução
+    Start-Service -Name $nome_servico
+    Write-Host "O serviço foi iniciado com sucesso."
+} else {
+    Write-Host "O serviço já está em execução."
+}
